@@ -1,0 +1,117 @@
+CREATE DATABASE BD_RECICLAJE;
+USE BD_RECICLAJE;
+
+-- Tabla: cliente
+CREATE TABLE cliente (
+    id_cliente INT PRIMARY KEY,
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    telefono VARCHAR(30),
+    direccion VARCHAR(100),
+    correo VARCHAR(100)
+);
+
+-- Tabla: empleados
+CREATE TABLE empleados (
+    id_empleados INT PRIMARY KEY,
+    nombre VARCHAR(50),
+    apellido VARCHAR(100),
+    cargo VARCHAR(30),
+    telefono VARCHAR(30),
+    direccion VARCHAR(100),
+    correo VARCHAR(100)
+);
+
+-- Tabla: sistema
+CREATE TABLE sistema (
+    id_sistema INT PRIMARY KEY,
+    id_empleados INT,
+    usuarios_em VARCHAR(100),
+    contrasena_em VARCHAR(250),
+    FOREIGN KEY (id_empleados) REFERENCES empleados(id_empleados)
+);
+
+-- Tabla: pedido
+CREATE TABLE pedido (
+    id_pedido INT PRIMARY KEY,
+    id_cliente INT,
+    fecha_pedido DATE,
+    estado VARCHAR(20),
+    tipo_mt VARCHAR(30),
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
+);
+
+-- Tabla: factura
+CREATE TABLE factura (
+    id_factura INT PRIMARY KEY,
+    id_pedido INT,
+    id_cliente INT,
+    tipo_mt VARCHAR(30),
+    precio_por_k DECIMAL(10,2),
+    total DECIMAL(10,2),
+    FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido),
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
+);
+
+-- Tabla: domiciliario
+CREATE TABLE domiciliario (
+    id_domiciliario INT PRIMARY KEY,
+    id_factura INT,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    tipo_vehiculo VARCHAR(30),
+    capacidad_carga DECIMAL(10,2),
+    contacto VARCHAR(30),
+    correo VARCHAR(40),
+    FOREIGN KEY (id_factura) REFERENCES factura(id_factura)
+);
+
+-- Tabla: proveedor
+CREATE TABLE proveedor (
+    id_proveedor INT PRIMARY KEY,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    tipo_insumo VARCHAR(30),
+    telefono VARCHAR(30),
+    correo VARCHAR(100)
+);
+
+-- Tabla: recepcion_material
+CREATE TABLE recepcion_material (
+    id_recepcion INT PRIMARY KEY,
+    id_proveedor INT,
+    fecha_recepcion DATE,
+    precio_por_k DECIMAL(10,2),
+    FOREIGN KEY (id_proveedor) REFERENCES proveedor(id_proveedor)
+);
+
+-- Tabla: pago_proveedor
+CREATE TABLE pago_proveedor (
+    id_pago INT PRIMARY KEY,
+    id_proveedor INT,
+    total_pago DECIMAL(10,2),
+    fecha_pago DATE,
+    estado VARCHAR(20),
+    FOREIGN KEY (id_proveedor) REFERENCES proveedor(id_proveedor)
+);
+
+-- Tabla: material
+CREATE TABLE material (
+    id_material INT PRIMARY KEY,
+    id_recepcion INT,
+    tipo_mt VARCHAR(30),
+    cantidad_mt DECIMAL(10,2),
+    descripcion VARCHAR(100),
+    FOREIGN KEY (id_recepcion) REFERENCES recepcion_material(id_recepcion)
+);
+
+-- Tabla: inventario
+CREATE TABLE inventario (
+    id_inventario INT PRIMARY KEY,
+    id_material INT,
+    id_pedido INT,
+    fecha_ac DATE,
+    cantidad DECIMAL(10,2),
+    FOREIGN KEY (id_material) REFERENCES material(id_material),
+    FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido)
+);
